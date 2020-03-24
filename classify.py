@@ -2,7 +2,10 @@ from flask import Flask, jsonify, request
 from flask_restful import Api, Resource
 from pymongo import MongoClient
 import bcrypt
+import config
+
 app = Flask(__name__)
+key = config.config["Password"]
 
 api = Api(app)
 
@@ -17,9 +20,8 @@ def checkPostedData(postedData, route):
             return 301
         else:
             return 200
-def checkUser(username):
-
-    client = MongoClient('localhost://27017')
+def checkUsers(username):
+    client = MongoClient('mongodb+srv://Users:{}@rest-9av7d.mongodb.net/test?retryWrites=true&w=majority'.format(key))
     db = client.ImageClassification
     users = db['Users']
     if users.find({'Username': username}).count() == 1:
@@ -41,7 +43,7 @@ class Register(Resource):
         username = postedData['Username']
         password = postedData['Password']
 
-        checkUser = checkUser(username)
+        checkUser = checkUsers(username)
         if checkUser != 200:
             retJson = {
                 'status code': 302,
@@ -49,7 +51,7 @@ class Register(Resource):
             }
             return jsonify(retJson)
         
-        client = MongoClient('mongodb://27017')
+        client = MongoClient('mongodb+srv://Users:{}@rest-9av7d.mongodb.net/test?retryWrites=true&w=majority'.format(key))
         db = client.ImageClassification
         users = db['Users']
 
