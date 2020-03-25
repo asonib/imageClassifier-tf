@@ -21,7 +21,7 @@ def checkPostedData(postedData, route):
         else:
             return 200
 def checkUsers(username):
-    client = MongoClient('mongodb+srv://Users:{}@rest-9av7d.mongodb.net/test?retryWrites=true&w=majority'.format(key))
+    client = MongoClient('mongodb+srv://Users:{}@cluster0-9av7d.mongodb.net/test?retryWrites=true&w=majority'.format(key))
     db = client.ImageClassification
     users = db['Users']
     if users.find({'Username': username}).count() == 1:
@@ -51,7 +51,7 @@ class Register(Resource):
             }
             return jsonify(retJson)
         
-        client = MongoClient('mongodb+srv://Users:{}@rest-9av7d.mongodb.net/test?retryWrites=true&w=majority'.format(key))
+        client = MongoClient('mongodb+srv://Users:{}@cluster0-9av7d.mongodb.net/test?retryWrites=true&w=majority'.format(key))
         db = client.ImageClassification
         users = db['Users']
 
