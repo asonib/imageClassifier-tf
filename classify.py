@@ -3,6 +3,9 @@ from flask_restful import Api, Resource
 from pymongo import MongoClient
 import bcrypt
 import config
+import requests
+import subprocess
+import json
 
 app = Flask(__name__)
 key = config.config["Password"]
@@ -22,6 +25,11 @@ def checkPostedData(postedData, route):
             return 200
     elif route == 'login':
         if 'Username' not in postedData or 'Password' not in postedData:
+            return 301
+        else:
+            return 200
+    elif route == 'classify':
+        if 'Username' not in postedData or 'Password' not in postedData or 'url' not in postedData:
             return 301
         else:
             return 200
@@ -125,6 +133,34 @@ class Login(Resource):
         }
         return jsonify(retJson)
 api.add_resource(Login, '/login')
+
+class Classifiy(Resource):
+    def post(self):
+        postedData = request.get_json()
+        checkData = checkPostedData(postedData, 'classify')
+        if checkData != 200:
+            retJson = {
+                'status code': 301,
+                'message': 'missing parameter'
+            }
+            return jsonify(retJson)
+        url = postedData['url']
+        username = postedData['Username']
+        password = postedData['Password']
+
+        imageUrl = requests.get(url)
+        r = requests.get(imageUrl)
+        with open('temp.jpg', 'wb') as f:
+            f.write(r.content)
+            process = subprocess.Popen(['python', './model/image_classifier_tf.py', '--image', 'temp.jpg'])
+            process.communicate()[0]
+            process.wait()
+        with open('res.txt', 'r') as g:
+            retJson = json.load(g)
+        return retJson
+api.add_resource(Classifiy, '/classify')
+
+
 
 if __name__ == '__main__':
     app.run()
