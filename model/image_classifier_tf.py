@@ -161,7 +161,7 @@ def run_inference_on_image(image):
       score = predictions[node_id]
       retJson[human_string] = int(score*100)
       print('%s (score = %.5f)' % (human_string, score))
-      with open('text.txt', 'w') as f:
+      with open('res.txt', 'w') as f:
       	json.dump(retJson, f)
 
 def maybe_download_and_extract():
