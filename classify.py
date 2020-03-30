@@ -144,13 +144,13 @@ class Classifiy(Resource):
                 'message': 'missing parameter'
             }
             return jsonify(retJson)
-        url = postedData['url']
+        imageUrl = postedData['url']
         username = postedData['Username']
         password = postedData['Password']
 
-        imageUrl = requests.get(url)
+        
         r = requests.get(imageUrl)
-        with open('temp.jpg', 'wb') as f:
+        with open('./pics/temp.jpg', 'wb') as f:
             f.write(r.content)
             process = subprocess.Popen(['python', './model/image_classifier_tf.py', '--image', 'temp.jpg'])
             process.communicate()[0]
